@@ -38,7 +38,7 @@ function nyitPopup() {
     .then(res => res.json())
     .then(valasz => {
       if (valasz.success) {
-        location.reload(); // oldal újratöltése
+        location.reload(); 
       } else {
         alert('Hiba a mentés során!');
       }
@@ -48,19 +48,22 @@ function nyitPopup() {
   
 
   fetch('/select')
-    .then(res => res.json()) // JSON válasz
+    .then(res => res.json()) 
     .then(data => {
       if (Array.isArray(data)) {
         const tbody = document.querySelector('#termekTabla tbody');
         data.forEach(termek => {
-          const sor = document.createElement('tr');
-          sor.innerHTML = `
-            <td>${termek.name}</td>
-            <td>${termek.description}</td>
-            <td>${termek.price}</td>
-            <td>${termek.category ?? 'Ismeretlen'}</td>
-          `;
-          tbody.appendChild(sor);
+            const sor = document.createElement('tr');
+            sor.innerHTML = `
+              <td>${termek.name}</td>
+              <td>${termek.description}</td>
+              <td>${termek.price}</td>
+              <td>${termek.category ?? 'Ismeretlen'}</td>
+              <td>
+                <button class="btn btn-sm btn-success" onclick='hozzaadKosarhoz(${JSON.stringify(termek)})'>Kosárba</button>
+              </td>
+            `;
+            tbody.appendChild(sor);
         });
       } else {
         console.error('Nem tömb formátumú adatot kaptunk:', data);
@@ -69,3 +72,11 @@ function nyitPopup() {
     .catch(err => {
       console.error('Hiba:', err);
     });
+
+// Kosárkezelés
+function hozzaadKosarhoz(termek) {
+    let kosar = JSON.parse(localStorage.getItem('kosar')) || [];
+    kosar.push(termek);
+    localStorage.setItem('kosar', JSON.stringify(kosar));
+    alert('Termék hozzáadva a kosárhoz!');
+  }

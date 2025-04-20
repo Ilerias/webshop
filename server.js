@@ -27,6 +27,17 @@ app.get('/api/test', (req, res) => {
   res.json({ message: 'Szerver működik!' });
 });
 
+// Userek listázása
+app.get('/api/users', (req, res) => {
+    db.all('SELECT id, name FROM users', [] ,(err, rows) => {
+      if (err) {
+        console.error("Hiba a felhasználók lekérésekor:", err);
+        return res.status(500).json({ error: "DB error" });
+      }
+      res.json(rows); 
+    });
+  });
+
 // API: termékek listázása
 app.get('/select', (req, res) => {
     const sql = `
@@ -67,6 +78,39 @@ app.get('/select', (req, res) => {
       res.json({ success: true, id: this.lastID });
     });
   });  
+  
+// API: rendelés leadása
+  app.post('/api/rendeles', (req, res) => {
+    const { user_id, items } = req.body;
+  
+    if (!user_id || !Array.isArray(items) || items.length === 0) {
+      return res.json({ success: false, message: 'Hiányzó adatok' });
+    }
+  
+    db.run(
+      `INSERT INTO orders (user_id) VALUES (?)`,
+      [user_id],
+      function(err) {
+        if (err) return res.json({ success: false, message: 'Hiba az orders mentésekor' });
+  
+        const orderId = this.lastID;
+  
+        const stmt = db.prepare(`
+          INSERT INTO order_items (order_id, product_id, quantity) VALUES (?, ?, ?)
+        `);
+  
+        items.forEach(item => {
+          stmt.run(orderId, item.id, 1);
+        });
+  
+        stmt.finalize(err => {
+          if (err) return res.json({ success: false, message: 'Hiba a tételek mentésekor' });
+          res.json({ success: true });
+        });
+      }
+    );
+  });
+  
 
 // Hibakezelés
 app.use((req, res, next) => {
