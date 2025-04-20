@@ -55,6 +55,25 @@ app.get('/select', (req, res) => {
     });
   });
 
+// Rendelések lekérdezése
+app.get('/api/orders', (req, res) => {
+    db.all(`
+      SELECT o.id, o.order_date, u.name AS user_name, p.name AS product_name, oi.quantity, p.price 
+      FROM orders o
+      JOIN users u ON o.user_id = u.id
+      JOIN order_items oi ON o.id = oi.order_id
+      JOIN products p ON oi.product_id = p.id
+      ORDER BY o.order_date DESC
+    `, (err, rows) => {
+      if (err) {
+        res.status(500).json({ message: 'Hiba a rendeléseket lekérdezésében.' });
+        return;
+      }
+      res.json(rows);
+    });
+  });
+  
+
 // API: termékek hozzáadása
   app.get('/api/kategoriak', (req, res) => {
     db.all('SELECT id, name FROM categories', [], (err, rows) => {
