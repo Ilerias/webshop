@@ -38,7 +38,7 @@
 
     <button class="btn btn-primary mb-3" onclick="nyitPopup()">Új termék hozzáadása</button>
 
-    <!-- Modal -->
+    <!--Új termék Modal -->
     <div class="modal fade" id="ujTermekModal" tabindex="-1" aria-labelledby="ujTermekLabel" aria-hidden="true">
       <div class="modal-dialog">
         <div class="modal-content">
@@ -70,6 +70,41 @@
         </div>
       </div>
     </div>
+
+    <!-- Módosító Modal -->
+<div class="modal fade" id="modositTermekModal" tabindex="-1" aria-labelledby="modositTermekLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modositTermekLabel">Termék módosítása</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Bezárás"></button>
+      </div>
+      <div class="modal-body">
+        <form id="modositTermekForm">
+          <input type="hidden" id="modositTermekId">
+          <div class="mb-3">
+            <label for="modositTermekNev" class="form-label">Név</label>
+            <input type="text" class="form-control" id="modositTermekNev" required>
+          </div>
+          <div class="mb-3">
+            <label for="modositTermekLeiras" class="form-label">Leírás</label>
+            <input type="text" class="form-control" id="modositTermekLeiras">
+          </div>
+          <div class="mb-3">
+            <label for="modositTermekAr" class="form-label">Ár</label>
+            <input type="number" class="form-control" id="modositTermekAr" required>
+          </div>
+          <div class="mb-3">
+            <label for="modositTermekKategoria" class="form-label">Kategória</label>
+            <select class="form-select" id="modositTermekKategoria" required></select>
+          </div>
+          <button type="submit" class="btn btn-success">Módosítás mentése</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
   </main>
 
   <footer class="bg-dark text-light text-center py-3">

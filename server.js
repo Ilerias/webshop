@@ -129,7 +129,60 @@ app.get('/api/orders', (req, res) => {
       }
     );
   });
-  
+
+// API: termék törlése
+app.delete('/delete/:id', (req, res) => {
+  const productId = req.params.id;
+
+  const sql = `DELETE FROM products WHERE id = ?`;
+
+  db.run(sql, [productId], function(err) {
+    if (err) {
+      console.error('Hiba a törlés során:', err.message);
+      return res.status(500).json({ error: 'Törlés hiba' });
+    }
+
+    if (this.changes === 0) {
+      return res.status(404).json({ error: 'A termék nem található' });
+    }
+
+    res.json({ success: true, message: 'Termék törölve' });
+  });
+});
+
+// API: termék módosítása
+app.put('/api/termek/:id', (req, res) => {
+  const { name, description, price, category_id } = req.body;
+  const { id } = req.params;
+
+  const sql = `UPDATE products SET name = ?, description = ?, price = ?, category_id = ? WHERE id = ?`;
+  db.run(sql, [name, description, price, category_id, id], function(err) {
+    if (err) {
+      console.error('Hiba a módosításnál:', err.message);
+      return res.status(500).json({ error: 'Módosítási hiba' });
+    }
+    if (this.changes === 0) {
+      return res.status(404).json({ error: 'Termék nem található' });
+    }
+    res.json({ success: true });
+  });
+});
+
+// Egy termék lekérdezése ID alapján
+app.get('/api/termek/:id', (req, res) => {
+  const id = req.params.id;
+  db.get('SELECT * FROM products WHERE id = ?', [id], (err, row) => {
+    if (err) {
+      console.error('Hiba az adat lekérdezésénél:', err.message);
+      return res.status(500).json({ error: 'Lekérdezési hiba' });
+    }
+    if (!row) {
+      return res.status(404).json({ error: 'A termék nem található' });
+    }
+    res.json(row);
+  });
+});
+
 
 // Hibakezelés
 app.use((req, res, next) => {
